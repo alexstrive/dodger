@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 var utils_1 = require("./utils");
 var Entities;
@@ -38,11 +38,12 @@ var Stone = entities_1.Entities.Stone;
 var entities = [];
 var countNewEntities = 1;
 var addK = .3;
+var score = 0;
+var scoreText;
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
     preload: preload,
     create: create,
-    update: update,
-    render: render
+    update: update
 });
 function preload() {
     game.load.image("bg", "assets/bg.png");
@@ -56,10 +57,16 @@ function create() {
     game.add.sprite(0, 50, "bg");
     game.stage.backgroundColor = '#58B7FF';
     game.time.desiredFps = 300;
+    scoreText = game.add.text(game.width - 150, 0, "Score: 0", {
+        fill: "White"
+    });
     generateEntity();
     generateEntity();
 }
 function update() {
+    console.log("test");
+    console.log("test2");
+    console.log("test3");
     for (var _i = 0, entities_2 = entities; _i < entities_2.length; _i++) {
         var entity = entities_2[_i];
         entity.update();
@@ -67,10 +74,9 @@ function update() {
             entity.sprite.kill();
             entities.splice(entities.indexOf(entity), 1);
             generateEntity();
+            updateScore();
         }
     }
-}
-function render() {
 }
 function generateEntity() {
     var entity = new Stone(game);
@@ -81,8 +87,11 @@ function generateEntity() {
         if (entities.length < 5) {
             entities.push(entity);
         }
-        console.log(countNewEntities);
     }
+}
+function updateScore() {
+    score++;
+    scoreText.setText("Score: " + score);
 }
 
 },{"./entities":1}],3:[function(require,module,exports){
@@ -99,4 +108,4 @@ var Utils;
     Utils.getRandomInt = getRandomInt;
 })(Utils = exports.Utils || (exports.Utils = {}));
 
-},{}]},{},[2]);
+},{}]},{},[2])

@@ -16,5 +16,15 @@
   "bugs": {
     "url": "https://github.com/allordiron/dodger/issues"
   },
-  "homepage": "https://github.com/allordiron/dodger#readme"
+  "homepage": "https://github.com/allordiron/dodger#readme",
+  "dependencies": {
+    "gulp": "latest"
+  },
+  "devDependencies": {
+    "browserify": "^13.1.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-typescript": "^3.1.3",
+    "typescript": "^2.1.4"
+  }
 }

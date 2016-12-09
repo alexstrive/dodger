@@ -4,12 +4,13 @@ import Stone = Entities.Stone;
 let entities: Array<Stone> = [];
 let countNewEntities = 1;
 let addK = .3;
+let score: number = 0;
+let scoreText: Phaser.Text;
 
 const game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
     preload: preload,
     create: create,
-    update: update,
-    render: render
+    update: update
 });
 function preload() {
     game.load.image("bg", "assets/bg.png");
@@ -26,11 +27,18 @@ function create() {
     game.stage.backgroundColor = '#58B7FF';
     game.time.desiredFps = 300;
 
+    scoreText = game.add.text(game.width - 150, 0, "Score: 0", {
+        fill: "White"
+    });
+
     generateEntity();
     generateEntity();
 }
 
 function update() {
+    console.log("test");
+    console.log("test2");
+    console.log("test3");
 
     for (let entity of entities) {
         entity.update();
@@ -39,11 +47,9 @@ function update() {
             entity.sprite.kill();
             entities.splice(entities.indexOf(entity), 1);
             generateEntity();
+            updateScore();
         }
     }
-}
-
-function render() {
 }
 
 function generateEntity() {
@@ -55,6 +61,10 @@ function generateEntity() {
         if (entities.length < 5) {
             entities.push(entity);
         }
-        console.log(countNewEntities);
     }
+}
+
+function updateScore() {
+    score++;
+    scoreText.setText(`Score: ${score}`);
 }

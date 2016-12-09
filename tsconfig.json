@@ -6,10 +6,7 @@
     "sourceMap": false,
     "outDir": "js/",
     "typeRoots": [
-      "typings/"
-    ],
-    "types": [
-      "phaser.d.ts"
+      "src/typings/"
     ]
   }
 }
