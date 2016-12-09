@@ -64,9 +64,6 @@ function create() {
     generateEntity();
 }
 function update() {
-    console.log("test");
-    console.log("test2");
-    console.log("test3");
     for (var _i = 0, entities_2 = entities; _i < entities_2.length; _i++) {
         var entity = entities_2[_i];
         entity.update();

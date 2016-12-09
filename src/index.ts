@@ -36,9 +36,6 @@ function create() {
 }
 
 function update() {
-    console.log("test");
-    console.log("test2");
-    console.log("test3");
 
     for (let entity of entities) {
         entity.update();
