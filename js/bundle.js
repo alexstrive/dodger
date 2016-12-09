@@ -45,6 +45,7 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
     render: render
 });
 function preload() {
+    game.load.image("bg", "assets/bg.png");
     game.load.image('s1', 'assets/stone-1.png');
     game.load.image('s2', 'assets/stone-2.png');
     game.load.image('s3', 'assets/stone-3.png');
@@ -52,8 +53,10 @@ function preload() {
     game.load.image('s5', 'assets/stone-5.png');
 }
 function create() {
-    game.stage.backgroundColor = '#0072bc';
+    game.add.sprite(0, 50, "bg");
+    game.stage.backgroundColor = '#58B7FF';
     game.time.desiredFps = 300;
+    generateEntity();
     generateEntity();
 }
 function update() {
@@ -72,9 +75,11 @@ function render() {
 function generateEntity() {
     var entity = new Stone(game);
     for (var i = 0; i < Math.floor(countNewEntities); i++) {
-        entities.push(entity);
         if (Math.floor(countNewEntities) < 2) {
             countNewEntities += addK;
+        }
+        if (entities.length < 5) {
+            entities.push(entity);
         }
         console.log(countNewEntities);
     }
