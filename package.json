@@ -1,0 +1,20 @@
+{
+  "name": "dodger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run": "browserify js/index.js -o js/bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allordiron/dodger.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/allordiron/dodger/issues"
+  },
+  "homepage": "https://github.com/allordiron/dodger#readme"
+}
