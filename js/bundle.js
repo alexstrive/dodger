@@ -13,10 +13,10 @@ var Entities;
             var y = 1;
             var n = utils_1.Utils.getRandomInt(1, 6);
             this.rotation = Math.PI / utils_1.Utils.getRandomInt(30, 60);
-            this.velocity.y = utils_1.Utils.getRandomInt(3, 6);
+            this.velocity.y = utils_1.Utils.getRandomInt(3, 5);
             this.sprite = game.add.sprite(x, y, "s" + n);
             this.sprite.anchor.set(.5, .5);
-            this.sprite.scale.set(.1, .1);
+            this.sprite.scale.set(.08, .08);
         }
         Stone.prototype.update = function () {
             this.sprite.position.add(this.velocity.x, this.velocity.y);
@@ -126,11 +126,11 @@ function update() {
     }
     if (keyRight.isDown) {
         hero.changeDirection(enums_1.Directions.Right);
-        hero.velocity.set(3, 0);
+        hero.velocity.set(4, 0);
     }
     else if (keyLeft.isDown) {
         hero.changeDirection(enums_1.Directions.Left);
-        hero.velocity.set(-3, 0);
+        hero.velocity.set(-4, 0);
     }
     else {
         hero.velocity.set(0, 0);

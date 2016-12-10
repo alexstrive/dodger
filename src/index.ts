@@ -68,11 +68,11 @@ function update() {
 
     if (keyRight.isDown) {
         hero.changeDirection(Directions.Right);
-        hero.velocity.set(3, 0);
+        hero.velocity.set(4, 0);
     }
     else if (keyLeft.isDown) {
         hero.changeDirection(Directions.Left);
-        hero.velocity.set(-3, 0);
+        hero.velocity.set(-4, 0);
     }
     else {
         hero.velocity.set(0, 0);

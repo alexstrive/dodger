@@ -30,10 +30,10 @@ export module Entities {
 
             this.rotation = Math.PI / Utils.getRandomInt(30, 60);
 
-            this.velocity.y = Utils.getRandomInt(3, 6);
+            this.velocity.y = Utils.getRandomInt(3, 5);
             this.sprite = game.add.sprite(x, y, `s${n}`);
             this.sprite.anchor.set(.5, .5);
-            this.sprite.scale.set(.1, .1)
+            this.sprite.scale.set(.08, .08)
         }
 
         update(): void {
