@@ -73,6 +73,13 @@ export class Hero implements IHero {
     }
 
     move(): void {
+        if (this.sprite.position.x > 800){
+            this.sprite.position.x = 800;
+        }
+
+        if (this.sprite.position.x < 0) {
+            this.sprite.position.x = 0;
+        }
 
         this.sprite.position.add(this.velocity.x, this.velocity.y);
     }

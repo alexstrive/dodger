@@ -194,6 +194,12 @@ var Hero = (function () {
         this.move();
     };
     Hero.prototype.move = function () {
+        if (this.sprite.position.x > 800) {
+            this.sprite.position.x = 800;
+        }
+        if (this.sprite.position.x < 0) {
+            this.sprite.position.x = 0;
+        }
         this.sprite.position.add(this.velocity.x, this.velocity.y);
     };
     Object.defineProperty(Hero.prototype, "direction", {
