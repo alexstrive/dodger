@@ -75,22 +75,21 @@ var Directions;
 var entities_1 = require("./entities");
 var hero_1 = require("./hero");
 var Stone = entities_1.Entities.Stone;
-var enums_1 = require("./enums");
+var MAX_ENTITIES = 7;
 var entities = [];
-var countNewEntities = 1;
-var k = .25;
 var score = 0;
 var scoreText;
-var bg;
+var background;
 var hero;
+// player input
 var keyLeft, keyRight;
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
+var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game', {
     preload: preload,
     create: create,
     update: update
 });
 function preload() {
-    game.load.image("bg", "assets/bg.png");
+    game.load.image("background", "assets/bg.png");
     game.load.image('s1', 'assets/stone-1.png');
     game.load.image('s2', 'assets/stone-2.png');
     game.load.image('s3', 'assets/stone-3.png');
@@ -98,17 +97,21 @@ function preload() {
     game.load.image('s5', 'assets/stone-5.png');
     game.load.image("hero", "assets/hero.png");
     game.load.image("hero-died", "assets/hero-died.png");
+    game.scale.pageAlignHorizontally = true;
+    game.scale.pageAlignVertically = true;
+    game.scale.setResizeCallback(function () {
+        // game.scale.setupScale(window.innerWidth, window.innerHeight);
+    }, this);
 }
 function create() {
-    bg = game.add.sprite(0, 0, "bg");
+    background = game.add.sprite(0, 0, "background");
     game.stage.backgroundColor = '#58B7FF';
     game.time.desiredFps = 60;
     scoreText = game.add.text(game.width - 150, 0, "Score: 0", {
         fill: "White"
     });
-    hero = new hero_1.Hero(game);
-    generateEntity();
-    generateEntity();
+    hero = new hero_1.CrazyDodger(game);
+    generateEntity(1);
     keyLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
     keyRight = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 }
@@ -120,31 +123,17 @@ function update() {
         if (entity.sprite.position.y > game.height) {
             entity.sprite.kill();
             entities.splice(entities.indexOf(entity), 1);
-            generateEntity();
+            generateEntity(2);
             updateScore();
         }
     }
-    if (keyRight.isDown) {
-        hero.changeDirection(enums_1.Directions.Right);
-        hero.velocity.set(4, 0);
-    }
-    else if (keyLeft.isDown) {
-        hero.changeDirection(enums_1.Directions.Left);
-        hero.velocity.set(-4, 0);
-    }
-    else {
-        hero.velocity.set(0, 0);
-    }
+    hero.handleInput(keyLeft, keyRight);
     hero.update();
 }
-function generateEntity() {
-    var entity = new Stone(game);
-    for (var i = 0; i < Math.floor(countNewEntities); i++) {
-        if (Math.floor(countNewEntities) < 2) {
-            countNewEntities += k;
-        }
-        if (entities.length < 7) {
-            entities.push(entity);
+function generateEntity(count) {
+    if (entities.length < MAX_ENTITIES) {
+        for (var i = 0; i < count; i++) {
+            entities.push(new Stone(game));
         }
     }
 }
@@ -153,37 +142,25 @@ function updateScore() {
     scoreText.setText("Score: " + score);
 }
 
-},{"./entities":1,"./enums":2,"./hero":4}],4:[function(require,module,exports){
+},{"./entities":1,"./hero":4}],4:[function(require,module,exports){
 "use strict";
-var Point = Phaser.Point;
 var enums_1 = require("./enums");
-var Hero = (function () {
-    function Hero(game) {
+var Point = Phaser.Point;
+var CrazyDodger = (function () {
+    function CrazyDodger(game) {
         this._isKilled = false;
-        var x = game.width / 2;
-        var y = 525;
+        this._speed = 5;
+        this._game = game;
+        var x = this._game.width / 2;
+        var y = this._game.height - 65;
         this.velocity = new Point(0, 0);
-        this.sprite = game.add.sprite(x, y, "hero");
+        this.sprite = this._game.add.sprite(x, y, "hero");
         this.direction = enums_1.Directions.Left;
         this.sprite.anchor.set(.5, .5);
         this.sprite.scale.set(.4, .4);
     }
-    Hero.prototype.reverseSprite = function () {
-        this.sprite.scale.multiply(-1, 1);
-    };
-    Hero.prototype.changeDirection = function (direction) {
-        if (direction != this.direction) {
-            this.reverseSprite();
-            this.direction = direction;
-            this.velocity.multiply(-1, 1);
-        }
-    };
-    Hero.prototype.isOverlap = function (entity) {
-        if (this.sprite.overlap(entity.sprite)) {
-            this.isKilled = true;
-        }
-    };
-    Hero.prototype.update = function () {
+    CrazyDodger.prototype.update = function () {
+        this._sprite.position.y = this._game.height - 65;
         if (this.isKilled) {
             this.sprite.loadTexture("hero-died");
             this.isKilled = false;
@@ -193,16 +170,53 @@ var Hero = (function () {
         }
         this.move();
     };
-    Hero.prototype.move = function () {
-        if (this.sprite.position.x > 800) {
-            this.sprite.position.x = 800;
+    CrazyDodger.prototype.move = function () {
+        var rightBorder = this._game.width - 40;
+        var leftBorder = 40;
+        if (this.sprite.position.x > rightBorder) {
+            this.sprite.position.x = rightBorder;
         }
-        if (this.sprite.position.x < 0) {
-            this.sprite.position.x = 0;
+        if (this.sprite.position.x < leftBorder) {
+            this.sprite.position.x = leftBorder;
         }
         this.sprite.position.add(this.velocity.x, this.velocity.y);
     };
-    Object.defineProperty(Hero.prototype, "direction", {
+    CrazyDodger.prototype.handleInput = function (keyLeft, keyRight) {
+        if (keyRight.isDown) {
+            this.changeDirection(enums_1.Directions.Right);
+            this.velocity.set(this.speed, 0);
+        }
+        else if (keyLeft.isDown) {
+            this.changeDirection(enums_1.Directions.Left);
+            this.velocity.set(-this.speed, 0);
+        }
+        else {
+            this.velocity.set(0, 0);
+        }
+    };
+    CrazyDodger.prototype.reverseSprite = function () {
+        this.sprite.scale.multiply(-1, 1);
+    };
+    CrazyDodger.prototype.changeDirection = function (direction) {
+        if (direction != this.direction) {
+            this.reverseSprite();
+            this.direction = direction;
+            this.velocity.multiply(-1, 1);
+        }
+    };
+    CrazyDodger.prototype.isOverlap = function (entity) {
+        if (this.sprite.overlap(entity.sprite)) {
+            this.isKilled = true;
+        }
+    };
+    Object.defineProperty(CrazyDodger.prototype, "speed", {
+        get: function () {
+            return this._speed;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CrazyDodger.prototype, "direction", {
         get: function () {
             return this._direction;
         },
@@ -212,7 +226,7 @@ var Hero = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Hero.prototype, "sprite", {
+    Object.defineProperty(CrazyDodger.prototype, "sprite", {
         get: function () {
             return this._sprite;
         },
@@ -222,7 +236,7 @@ var Hero = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Hero.prototype, "isKilled", {
+    Object.defineProperty(CrazyDodger.prototype, "isKilled", {
         get: function () {
             return this._isKilled;
         },
@@ -232,7 +246,7 @@ var Hero = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Hero.prototype, "velocity", {
+    Object.defineProperty(CrazyDodger.prototype, "velocity", {
         get: function () {
             return this._velocity;
         },
@@ -242,29 +256,37 @@ var Hero = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Hero.prototype, "scale", {
+    Object.defineProperty(CrazyDodger.prototype, "scale", {
         get: function () {
             return this._scale;
         },
         enumerable: true,
         configurable: true
     });
-    return Hero;
+    return CrazyDodger;
 }());
-exports.Hero = Hero;
+exports.CrazyDodger = CrazyDodger;
 
 },{"./enums":2}],5:[function(require,module,exports){
 "use strict";
-// Returns a random integer between min (included) and max (excluded)
-// Using Math.round() will give you a non-uniform distribution!
 var Utils;
 (function (Utils) {
+    function getRandom() {
+        return Math.random();
+    }
+    Utils.getRandom = getRandom;
+    // Returns a random integer between min (included) and max (excluded)
+    // Using Math.round() will give you a non-uniform distribution!
     function getRandomInt(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min)) + min;
     }
     Utils.getRandomInt = getRandomInt;
+    function getRandomArbitrary(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+    Utils.getRandomArbitrary = getRandomArbitrary;
 })(Utils = exports.Utils || (exports.Utils = {}));
 
 },{}]},{},[3])

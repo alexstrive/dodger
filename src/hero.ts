@@ -1,17 +1,18 @@
 import {Entities} from "./entities";
+import {Directions} from "./enums";
+
 import Sprite = Phaser.Sprite;
 import Point = Phaser.Point;
 import Game = Phaser.Game;
 import IEntity = Entities.IEntity;
-import {Directions} from "./enums";
-
+import Key = Phaser.Key;
 
 interface IHero {
-
+    speed: number;
+    isKilled: boolean;
     sprite: Sprite;
     velocity: Point;
     scale: Point;
-    isKilled: boolean;
     direction: Directions;
 
     update(): void;
@@ -19,27 +20,76 @@ interface IHero {
     changeDirection(direction: Directions): void;
     reverseSprite(): void;
     isOverlap(entity: IEntity): void;
-
+    handleInput(keyLeft: Key, keyRight: Key): void;
 }
 
-export class Hero implements IHero {
+export class CrazyDodger implements IHero {
+    private _speed: number;
     private _direction: Directions;
     private _sprite: Phaser.Sprite;
     private _velocity: Phaser.Point;
     private _scale: Phaser.Point;
     private _isKilled: boolean = false;
+    private _game: Game;
 
     constructor(game: Game) {
-        let x = game.width / 2;
-        let y = 525;
+        this._speed = 5;
+        this._game = game;
+
+        let x = this._game.width / 2;
+        let y = this._game.height - 65;
 
         this.velocity = new Point(0, 0);
-        this.sprite = game.add.sprite(x, y, "hero");
+
+        this.sprite = this._game.add.sprite(x, y, "hero");
 
         this.direction = Directions.Left;
-
         this.sprite.anchor.set(.5, .5);
         this.sprite.scale.set(.4, .4);
+    }
+
+    update(): void {
+
+        this._sprite.position.y = this._game.height - 65;
+
+        if (this.isKilled) {
+            this.sprite.loadTexture("hero-died");
+            this.isKilled = false;
+        }
+        else {
+            this.sprite.loadTexture("hero");
+        }
+
+        this.move();
+    }
+
+    move(): void {
+        let rightBorder: number = this._game.width - 40;
+        let leftBorder: number = 40;
+
+        if (this.sprite.position.x > rightBorder){
+            this.sprite.position.x = rightBorder;
+        }
+
+        if (this.sprite.position.x < leftBorder) {
+            this.sprite.position.x = leftBorder;
+        }
+
+        this.sprite.position.add(this.velocity.x, this.velocity.y);
+    }
+
+    handleInput(keyLeft: Key, keyRight: Key): void {
+        if (keyRight.isDown) {
+            this.changeDirection(Directions.Right);
+            this.velocity.set(this.speed, 0);
+        }
+        else if (keyLeft.isDown) {
+            this.changeDirection(Directions.Left);
+            this.velocity.set(-this.speed, 0);
+        }
+        else {
+            this.velocity.set(0, 0);
+        }
     }
 
     reverseSprite(): void {
@@ -60,30 +110,9 @@ export class Hero implements IHero {
         }
     }
 
-    update(): void {
-        if (this.isKilled) {
-            this.sprite.loadTexture("hero-died");
-            this.isKilled = false;
-        }
-        else {
-            this.sprite.loadTexture("hero");
-        }
-
-        this.move();
+    get speed(): number {
+        return this._speed;
     }
-
-    move(): void {
-        if (this.sprite.position.x > 800){
-            this.sprite.position.x = 800;
-        }
-
-        if (this.sprite.position.x < 0) {
-            this.sprite.position.x = 0;
-        }
-
-        this.sprite.position.add(this.velocity.x, this.velocity.y);
-    }
-
 
     get direction(): Directions {
         return this._direction;

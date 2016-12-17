@@ -37,13 +37,10 @@ export module Entities {
         }
 
         update(): void {
-
             this.sprite.position.add(this.velocity.x, this.velocity.y);
             this.sprite.scale.add(this.scale.x, this.scale.y);
             this.sprite.rotation += this.rotation;
-
         }
-
 
         get sprite(): Sprite {
             return this._sprite;
