@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/allordiron/dodger.git"
+    "url": "git+https://github.com/novopashin/dodger.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/allordiron/dodger/issues"
+    "url": "https://github.com/novopashin/dodger/issues"
   },
-  "homepage": "https://github.com/allordiron/dodger#readme",
+  "homepage": "https://github.com/novopashin/dodger#readme",
   "dependencies": {
     "gulp": "latest"
   },
